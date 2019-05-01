@@ -10,7 +10,7 @@ Register a ride, share the link. No accounts, no cookies, no tracking.
 <form class="w3-container" method="POST" action="/rides">
     <p>
     <label for="title" class="db fw6 lh-copy f6" >Title</label>
-  <input class="w3-input" type="text" id="title" name="title" placeholder="Title (required)" required><br>
+  <input class="w3-input" type="text" id="title" name="title" placeholder="Title (required)" required pattern=".*\S+.*"><br>
   </p>
   <p>
   <label for="date" class="db fw6 lh-copy f6" >Date of ride</label>
