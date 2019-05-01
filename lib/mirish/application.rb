@@ -70,8 +70,6 @@ module Mirish
     # root page
     get "/" do
       @rides = Ride.all
-      #p @rides.size
-      p settings.connections
       erb :root
     end
 
