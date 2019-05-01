@@ -10,7 +10,7 @@ Register a ride, share the link. No accounts, no cookies, no tracking.
 <form class="w3-container" method="POST" action="/rides">
     <p>
     <label for="title" class="db fw6 lh-copy f6" >Title</label>
-  <input class="w3-input" type="text" id="title" name="title" placeholder="Title (required)" required pattern=".*\S+.*"><br>
+  <input class="w3-input" type="text" id="title" name="title" placeholder="Title (required)" required pattern=".*\S+.*">
   </p>
   <p>
   <label for="date" class="db fw6 lh-copy f6" >Date of ride</label>
@@ -33,8 +33,10 @@ Register a ride, share the link. No accounts, no cookies, no tracking.
   </p>
 </form>
 </div>
+<% if Sinatra::Base.development? %>
 <% unless @rides.nil? || @rides.empty? %>
-<h4>Current Rides</h4>
+<div class="w3-container w3-padding-16 w3-text-dark-grey">
+<h4>Current Rides (only shown in development environment)</h4>
 <table style="width:100%">
   <tr>
     <th>Date</th>
@@ -50,5 +52,7 @@ Register a ride, share the link. No accounts, no cookies, no tracking.
 </tr>
   <% end %>
 </table>
+</div>
+<% end %>
 <% end %>
 </div>
