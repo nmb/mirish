@@ -1,0 +1,54 @@
+<div class="w3-container w3-padding-16 w3-text-dark-grey">
+<h2>No Nonsense Ride Sharing</h2>
+Register a ride, share the link. No accounts, no cookies, no tracking.
+</div>
+<div class="w3-container">
+<div class="w3-card-4">
+<div class="w3-container w3-teal">
+    <h2>Create New Ride</h2>
+</div>
+<form class="w3-container" method="POST" action="/rides">
+    <p>
+    <label for="title" class="db fw6 lh-copy f6" >Title</label>
+  <input class="w3-input" type="text" id="title" name="title" placeholder="Title (required)" required><br>
+  </p>
+  <p>
+  <label for="date" class="db fw6 lh-copy f6" >Date of ride</label>
+  <input class="w3-input" type="date" id="date" name="date" min="<%= Date.today %>" max="<%= Date.today + 30 %>" required>
+  </p>
+  <p>
+  <label for="time" class="db fw6 lh-copy f6" >Time of ride</label>
+  <input class="w3-input" type="time" id="time" name="time" required>
+  </p>
+  <p>
+  <label for="seats" class="db fw6 lh-copy f6" >No of free seats</label>
+  <input class="w3-input" type="number" id="seats" name="seats" min="1" max="8" required>
+  </p>
+  <p>
+  <label for="description" class="db fw6 lh-copy f6" >Additional information</label>
+  <textarea class="w3-input" id="description" name="description" rows="5"  placeholder="Description (optional)"></textarea>
+  </p>
+  <p>
+        <input class="w3-button w3-circle w3-teal w3-xlarge" type="submit" value="+">
+  </p>
+</form>
+</div>
+<% unless @rides.nil? || @rides.empty? %>
+<h4>Current Rides</h4>
+<table style="width:100%">
+  <tr>
+    <th>Date</th>
+    <th>Title</th>
+    <th>No of seats</th>
+  </tr>
+  <% @rides.each do |t| %>
+  <tr id="<%= t.adminuuid %>">
+    <td><a href="/rides/<%= t.uuid %>"><%= t.date.to_s %></a></td>
+    <td><%= t.title.to_s %></td>
+    <td><%= t.seats.count %></td>
+    <td><button title="Delete" onclick="deleteRide('<%= t.adminuuid %>');" ><i class="fa fa-trash fa-2x"></i></button></td>
+</tr>
+  <% end %>
+</table>
+<% end %>
+</div>

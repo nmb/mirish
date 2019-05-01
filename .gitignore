@@ -1,0 +1,13 @@
+*.db
+*.sqlite3
+.bundle/*
+log/*
+*.swp
+*.swo
+.env
+TODO
+config/config.yml
+config/config-nbis.yml
+.rufus-scheduler.lock
+tmp/
+

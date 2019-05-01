@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= SiteConfig.title %></title>
+    <link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <!-- <link href="/css/main.css" rel="stylesheet" type="text/css"></link> -->
+    <link rel="shortcut icon" href="/favicon.png" />
+
+    <script src="/js/mirish.js"></script>
+  </head>
+  <body>
+  <div class="w3-bar w3-xlarge w3-teal">
+    <a class="w3-bar-item" href="/">
+      <img  style="height:48px;" src="/mirish-white.svg" />
+    </a>
+    <a class="w3-bar-item w3-right w3-button" href="/about" title="About">About</a>
+    </div>
+<div class="w3-content">
+        <%= yield %>
+</div>
+      <div class="w3-container w3-margin-top w3-teal" style="text-align: center;">
+        <p class="legal">&mdash; &copy; <%= Time.now.strftime("%Y") %> <%= SiteConfig.author %> &mdash;
+        <a href="<%= SiteConfig.repo %>"><img src="/GitHub-Mark-32px.png" style="vertical-align:middle"/> GitHub</a> &mdash;
+        <a href="http://www.gnu.org/licenses/gpl.txt">GPLv3</a> &mdash;
+        </p>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+require 'dm-core'
+require 'dm-timestamps'
+require 'dm-validations'
+require 'dm-aggregates'
+require 'dm-migrations'
+require 'ostruct'
+require "sinatra/config_file"
+require 'time'
+require 'json'
+
+
+module Mirish
+  class Application < Sinatra::Base
+
+    register Sinatra::ConfigFile
+
+    DataMapper::Model.raise_on_save_failure = true
+    # This is to enable streaming tar:
+    class Sinatra::Helpers::Stream
+      alias_method :write, :<<
+    end
+
+    set server: 'thin'
+    configure :production, :development do
+      set :logging, nil
+      logger = Logger.new STDOUT
+      logger.level = Logger::INFO
+      logger.datetime_format = '%a %d-%m-%Y %H%M '
+      set :logger, logger
+      set :show_exceptions, true
+      set :dump_errors, true
+      set :views, "#{File.dirname(__FILE__)}/views"
+      #connections = []
+      #set :connections, connections
+      set connections: []
+
+      SiteConfig = OpenStruct.new(
+        :title => 'Mirish',
+        :author => 'Mikael Borg',
+        :repo => 'https://github.com/nmb/mirish',
+      )
+
+      DataMapper.setup(:default, (ENV["DATABASE_URL"] || "sqlite3:///#{File.expand_path(File.dirname(__FILE__))}/../../tmp/#{Sinatra::Base.environment}.db"))
+      DataMapper.finalize
+      DataMapper.auto_upgrade!
+
+    end
+
+    # Load config file
+    unless File.exist?('config/config.yml')
+      STDERR.puts 'Please provide a configuration file config/config.yml'
+      exit 1
+    end
+
+    config_file '../../config/config.yml'
+
+    # refuse to run as root
+    if Process.uid == 0
+      STDERR.puts 'Please do not run this as root.' 
+      exit 1
+    end
+
+
+    # set up sessions
+    #enable :sessions
+    #set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
+    #session_secret = ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
+    #use Rack::Session::Cookie, :key => 'rack.session',
+    #  :path => '/',
+    #  :secret => session_secret
+
+
+
+    register Sinatra::Flash
+
+
+    # remove expired tickets every minute
+    scheduler = Rufus::Scheduler.new(:lockfile => ".rufus-scheduler.lock")
+    unless scheduler.down?
+      scheduler.every '60s' do
+        Ride.all.each do |t|
+          if(t.date + settings.expiration_time < DateTime.now)
+            settings.logger.info "Deleting expired ride #{t.uuid}"
+            t.destroy
+          end
+        end
+      end
+    end
+
+    helpers do
+      def protected!
+        redirect(to('/login')) unless session[:userid]
+      end
+
+      def ownerprotected!(t)
+        protected!
+        halt 404, "Not found\n" unless t
+        halt 401, "Not authorized\n" unless session[:userid] == t.userid
+      end
+
+    end
+
+    # root page
+    get "/" do
+      @rides = Ride.all
+      #p @rides.size
+      p settings.connections
+      erb :root
+    end
+
+    # view about page
+    get "/about" do
+      erb :about
+    end
+      
+    # create new ride
+    post "/rides" do
+      settings.logger.info "New ride."
+      params.merge!(params){ |key, value| Sanitize.clean(value) }
+      r = Ride.new
+      r.title = params[:title]
+      r.description = params[:description]
+      r.date = params[:date] + " " + params[:time]
+      #r.time = Time.parse(Sanitize.clean(params[:time]))
+      r.save
+      params[:seats].to_i.times{ r.seats.create }
+      redirect to('/')
+    end
+
+    # delete ride
+    delete "/rides/:uuid/?" do |u|
+      @ride = Mirish::Ride.first(:adminuuid => u)
+      halt 404, 'not found' unless @ride
+      @ride.destroy 
+      halt 200
+    end
+
+    # claim seat
+    post "/rides/:uuid/:seatid/?" do |u,sid|
+      settings.logger.info("Claiming seat #{sid}.")
+      @ride = Mirish::Ride.first(:uuid => u)
+      halt 404, 'not found' unless @ride
+      s = Seat.get(sid)
+      name = Sanitize.clean(params[:name])
+      if(s && s.ride == @ride)
+        s.update(free: false, name: name)
+        update_json = {seatid: sid, name: name}.to_json
+        settings.connections.each { |out| out << "data: #{update_json}\n\n" }
+        204
+      else
+        404
+      end
+    end
+
+
+    # view rides
+    get "/rides/?" do
+      redirect to('/')
+    end
+    # view ride
+    get "/rides/:uuid/?" do |u|
+      #not_found if u.nil?
+      @ride = Ride.first(:uuid => u)
+      halt 404, 'not found' unless @ride
+      erb :ride
+    end
+
+    # ride event stream
+    get "/rides/:uuid/eventstream/?", provides: 'text/event-stream' do |u|
+        settings.logger.info("Opening stream.")
+        stream :keep_open do |out|
+          #out << "data: opened\n\n"
+          settings.connections << out
+          out.callback { settings.connections.delete(out) }
+        end
+    end
+    # set allow_uploads
+    patch "/tickets/:uuid/allow_uploads" do |u|
+      @ticket = XferTickets::Ticket.first(:uuid => u)
+      ownerprotected!(@ticket)
+      @ticket.set_allow_uploads(params['allow_uploads'] == "true")
+      @ticket.save
+      200
+    end
+
+  end
+end
