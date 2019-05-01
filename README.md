@@ -7,6 +7,8 @@ Register a ride, share the link. No accounts, no cookies, no tracking.
 
 ## Spin up for local testing
 
+Prerequisites: git, ruby.
+
 ```
 git clone https://github.com/nmb/mirish.git
 cd mirish
