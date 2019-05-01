@@ -109,13 +109,13 @@ module Mirish
       halt 404, 'not found' unless @ride
       s = Seat.get(sid)
       name = Sanitize.clean(params[:name])
-      if(s && s.ride == @ride)
+      if(s && s.ride == @ride && s.free)
         s.update(free: false, name: name)
         update_json = {seatid: sid, name: name}.to_json
         settings.connections.each { |out| out << "data: #{update_json}\n\n" }
         204
       else
-        404
+        halt(404)
       end
     end
 
