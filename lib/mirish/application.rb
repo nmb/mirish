@@ -46,58 +46,25 @@ module Mirish
 
     end
 
-    # Load config file
-    unless File.exist?('config/config.yml')
-      STDERR.puts 'Please provide a configuration file config/config.yml'
-      exit 1
-    end
-
-    config_file '../../config/config.yml'
-
     # refuse to run as root
     if Process.uid == 0
       STDERR.puts 'Please do not run this as root.' 
       exit 1
     end
 
-
-    # set up sessions
-    #enable :sessions
-    #set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
-    #session_secret = ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
-    #use Rack::Session::Cookie, :key => 'rack.session',
-    #  :path => '/',
-    #  :secret => session_secret
-
-
-
     register Sinatra::Flash
 
-
-    # remove expired tickets every minute
+    # remove expired ride every minute
     scheduler = Rufus::Scheduler.new(:lockfile => ".rufus-scheduler.lock")
     unless scheduler.down?
       scheduler.every '60s' do
         Ride.all.each do |t|
-          if(t.date + settings.expiration_time < DateTime.now)
+          if(DateTime.now > t.date)
             settings.logger.info "Deleting expired ride #{t.uuid}"
             t.destroy
           end
         end
       end
-    end
-
-    helpers do
-      def protected!
-        redirect(to('/login')) unless session[:userid]
-      end
-
-      def ownerprotected!(t)
-        protected!
-        halt 404, "Not found\n" unless t
-        halt 401, "Not authorized\n" unless session[:userid] == t.userid
-      end
-
     end
 
     # root page
@@ -124,7 +91,7 @@ module Mirish
       #r.time = Time.parse(Sanitize.clean(params[:time]))
       r.save
       params[:seats].to_i.times{ r.seats.create }
-      redirect to('/')
+      redirect to('/rides/' + r.uuid)
     end
 
     # delete ride
