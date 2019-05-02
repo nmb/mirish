@@ -54,10 +54,10 @@ module Mirish
 
     register Sinatra::Flash
 
-    # remove expired ride every minute
+    # remove expired rides every 12h
     scheduler = Rufus::Scheduler.new(:lockfile => ".rufus-scheduler.lock")
     unless scheduler.down?
-      scheduler.every '60s' do
+      scheduler.every '12h' do
         Ride.all.each do |t|
           if(DateTime.now > t.date)
             settings.logger.info "Deleting expired ride #{t.uuid}"
@@ -117,14 +117,12 @@ module Mirish
       end
     end
 
-
     # view rides
     get "/rides/?" do
       redirect to('/')
     end
     # view ride
     get "/rides/:uuid/?" do |u|
-      #not_found if u.nil?
       @ride = Ride.first(:uuid => u)
       halt 404, 'not found' unless @ride
       erb :ride
@@ -132,20 +130,10 @@ module Mirish
 
     # ride event stream
     get "/rides/:uuid/eventstream/?", provides: 'text/event-stream' do |u|
-        settings.logger.info("Opening stream.")
         stream :keep_open do |out|
-          #out << "data: opened\n\n"
           settings.connections << out
           out.callback { settings.connections.delete(out) }
         end
-    end
-    # set allow_uploads
-    patch "/tickets/:uuid/allow_uploads" do |u|
-      @ticket = XferTickets::Ticket.first(:uuid => u)
-      ownerprotected!(@ticket)
-      @ticket.set_allow_uploads(params['allow_uploads'] == "true")
-      @ticket.save
-      200
     end
 
   end
