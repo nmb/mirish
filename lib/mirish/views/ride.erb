@@ -15,8 +15,10 @@
     <h2><%= @ride.title %></h2>
   </div>
   <div class="w3-container">
+  <h3>Date</h3>
+   <%= @ride.date %>
   <h3>Time</h3>
-   <%= @ride.date.to_time %>
+   <%= @ride.time %>
   <h3>Notes</h3>
   <div class="w3-panel w3-sand" id="desc">
     <%= @ride.description %>

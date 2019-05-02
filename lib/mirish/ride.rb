@@ -12,8 +12,8 @@ module Mirish
 
     property :id, Serial
     property :created_at, DateTime
-    property :date, DateTime, required: true
-    #property :time, Time, required: true
+    property :date, Date, required: true
+    property :time, String, required: true
     property :title, String, required: true
     property :description, Text
     property :uuid, String, unique: true, required: true, default: lambda { |r,p| SecureRandom.urlsafe_base64(n=32)}

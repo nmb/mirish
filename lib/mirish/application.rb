@@ -80,13 +80,12 @@ module Mirish
       
     # create new ride
     post "/rides" do
-      settings.logger.info "New ride."
       params.merge!(params){ |key, value| Sanitize.clean(value) }
       r = Ride.new
       r.title = params[:title]
       r.description = params[:description]
-      r.date = params[:date] + " " + params[:time]
-      #r.time = Time.parse(Sanitize.clean(params[:time]))
+      r.date = params[:date]
+      r.time = params[:time]
       r.save
       params[:seats].to_i.times{ r.seats.create }
       redirect to('/rides/' + r.uuid)
