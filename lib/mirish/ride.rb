@@ -13,18 +13,14 @@ module Mirish
     property :id, Serial
     property :created_at, DateTime
     property :date, Date, required: true
-    property :time, String, required: true
-    property :title, String, required: true
+    property :time, String, :length => 255, required: true
+    property :title, String,:length => 255,  required: true
     property :description, Text
     property :uuid, String, unique: true, required: true, default: lambda { |r,p| SecureRandom.urlsafe_base64(n=32)}
     property :adminuuid, String, unique: true, required: true, default: lambda { |r,p| SecureRandom.urlsafe_base64(n=32)}
 
     has n, :seats, constraint: :destroy
-
-
-    def expirydate
-      return self.date + Mirish::Application.settings.expiration_time
-    end
+    has n, :messages, constraint: :destroy
 
   end
 end
