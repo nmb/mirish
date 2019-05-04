@@ -143,6 +143,7 @@ DEPENDENCIES
   dm-core
   dm-migrations
   dm-pager
+  dm-serializer
   dm-sqlite-adapter
   dm-timestamps
   dm-validations

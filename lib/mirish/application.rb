@@ -3,6 +3,7 @@ require 'dm-timestamps'
 require 'dm-validations'
 require 'dm-aggregates'
 require 'dm-migrations'
+require 'dm-serializer'
 require 'ostruct'
 require "sinatra/config_file"
 require 'time'
@@ -108,12 +109,21 @@ module Mirish
       name = Sanitize.clean(params[:name])
       if(s && s.ride == @ride && s.free)
         s.update(free: false, name: name)
-        update_json = {seatid: sid, name: name}.to_json
-        settings.connections.each { |out| out << "data: #{update_json}\n\n" }
+        settings.connections.each { |out| out << "data: #{s.to_json}\n\n" }
         204
       else
         halt(404)
       end
+    end
+
+    # add message
+    post "/rides/:uuid/?" do |u|
+      @ride = Mirish::Ride.first(:uuid => u)
+      halt 404, 'not found' unless @ride
+      msg = Sanitize.clean(params[:message])
+      m = @ride.messages.create(msg: msg)
+      settings.connections.each { |out| out << "data: #{m.to_json}\n\n" }
+      204
     end
 
     # view rides

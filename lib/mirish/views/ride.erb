@@ -3,8 +3,12 @@
   var es = new EventSource(window.location.href + '/eventstream');
   es.onmessage = function(e) { 
     var d = JSON.parse(e.data);
-    updateSeat(d.seatid, d.name);
-    console.log(d + "\n"); 
+    if(d.hasOwnProperty('name')) {
+      updateSeat(d.id, d.name);
+    }
+    else if (d.hasOwnProperty('msg')) {
+      addMessage(d.msg);
+    }
   };
 </script>
 
@@ -61,3 +65,29 @@
 </div>
     </div>
     </div>
+
+
+  <div class="w3-container w3-padding-16">
+    <div class="w3-card-4">
+
+  <div class="w3-container w3-teal">
+    <h2>Messages</h2>
+  </div>
+  <div class="w3-container" id="messages">
+    <% @ride.messages.reverse.each do |m| %>
+      <div>
+        <%= m.msg %>
+      </div>
+    <% end %>
+  </div>
+  </div>
+  </div>
+
+  <form class="w3-container" onSubmit="return postMessage(document.getElementById('message').value)">
+  <textarea class="w3-input" id="message" name="message" rows="5" maxlength="140" placeholder="Description (optional)"></textarea>
+    </p>
+      <p>
+              <input class="w3-button w3-circle w3-teal w3-xlarge" type="submit" value="+">
+                </p>
+  </form>
+
