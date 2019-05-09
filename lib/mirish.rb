@@ -13,4 +13,5 @@ require "mirish/ride.rb"
 require "mirish/seat.rb"
 require "mirish/message.rb"
 require "mirish/application.rb"
+require "mirish/controller.rb"
 
