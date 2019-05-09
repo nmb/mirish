@@ -3,7 +3,6 @@ require 'dm-timestamps'
 require 'dm-validations'
 require 'dm-aggregates'
 require 'dm-migrations'
-require 'ostruct'
 require 'sanitize'
 
 module Mirish

@@ -4,7 +4,6 @@ require 'dm-validations'
 require 'dm-aggregates'
 require 'dm-migrations'
 require 'dm-serializer'
-require 'ostruct'
 require "sinatra/config_file"
 require 'time'
 require 'json'
@@ -35,11 +34,11 @@ module Mirish
       #set :connections, connections
       set connections: []
 
-      SiteConfig = OpenStruct.new(
+      SiteConfig = {
         :title => 'Mirish',
         :author => 'Mikael Borg',
         :repo => 'https://github.com/nmb/mirish',
-      )
+      }
 
       DataMapper.setup(:default, (ENV["DATABASE_URL"] || "sqlite3:///#{File.expand_path(File.dirname(__FILE__))}/../../tmp/#{Sinatra::Base.environment}.db"))
       DataMapper.finalize
