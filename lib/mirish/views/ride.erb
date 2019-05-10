@@ -7,13 +7,25 @@
       updateSeat(d.id, d.name);
     }
     else if (d.hasOwnProperty('msg')) {
-      addMessage(d.msg);
+      addMessage(d.created_at, d.msg);
     }
   };
 </script>
 
-  <div class="w3-container w3-padding-16">
+<div id="msgtemplate" style="display:none" >
+  <div class="w3-container w3-margin">
     <div class="w3-card-4">
+      <div class="w3-container w3-orange">
+        <h5 class="w3-right msgheader" ></h5>
+      </div>
+  <div class="w3-margin msgbody">
+  </div>
+    </div>
+  </div>
+</div>
+
+<div class="w3-container w3-padding-16">
+  <div class="w3-card-4">
 
   <div class="w3-container w3-teal">
     <h2><%= @ride.title %></h2>
@@ -67,27 +79,34 @@
     </div>
 
 
-  <div class="w3-container w3-padding-16">
-    <div class="w3-card-4">
+    <div class="w3-container w3-padding-16">
+      <div class="w3-card-4">
 
-  <div class="w3-container w3-teal">
-    <h2>Messages</h2>
-  </div>
-  <div class="w3-container" id="messages">
-    <% @ride.messages.reverse.each do |m| %>
-      <div>
-        <%= m.msg %>
+        <div class="w3-container w3-teal">
+          <h2>Messages</h2>
+        </div>
+        <div class="w3-container" id="messages">
+          <% @ride.messages.each do |m| %>
+    <script>
+      addMessage("<%= m.created_at %>", "<%= m.msg %>");
+    </script>
+          <% end %>
+        </div>
       </div>
-    <% end %>
-  </div>
-  </div>
-  </div>
+    </div>
 
-  <form class="w3-container" onSubmit="return postMessage(document.getElementById('message').value)">
-  <textarea class="w3-input" id="message" name="message" rows="5" maxlength="140" placeholder="Description (optional)"></textarea>
+            <div class="w3-container w3-margin">
+              <div class="w3-card-4">
+        <div class="w3-container w3-teal">
+          <h2>Add new message</h2>
+        </div>
+  <form class="w3-container w3-margin" onSubmit="return postMessage(document.getElementById('message').value)">
+  <textarea class="w3-input" id="message" name="message" rows="5" maxlength="140" placeholder="Type your message here." required pattern=".*\S+.*"></textarea>
     </p>
       <p>
               <input class="w3-button w3-circle w3-teal w3-xlarge" type="submit" value="+">
                 </p>
   </form>
+        </div>
+      </div>
 
