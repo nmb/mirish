@@ -42,7 +42,7 @@ module Mirish
       name = Sanitize.clean(params[:name])
       if(s && s.ride == @ride && s.free)
         s.update(free: false, name: name)
-        settings.connections.each { |out| out << "data: #{s.to_json}\n\n" }
+        settings.connections[u].each { |out| out << "data: #{s.to_json}\n\n" }
         204
       else
         halt(404)
@@ -55,7 +55,7 @@ module Mirish
       halt 404, 'not found' unless @ride
       msg = Sanitize.clean(params[:message])
       m = @ride.messages.create(msg: msg)
-      settings.connections.each { |out| out << "data: #{m.to_json}\n\n" }
+      settings.connections[u].each { |out| out << "data: #{m.to_json}\n\n" }
       204
     end
 
@@ -73,8 +73,8 @@ module Mirish
     # ride event stream
     get "/rides/:uuid/eventstream/?", provides: 'text/event-stream' do |u|
         stream :keep_open do |out|
-          settings.connections << out
-          out.callback { settings.connections.delete(out) }
+          settings.connections[u] << out
+          out.callback { settings.connections[u].delete(out) }
         end
     end
 

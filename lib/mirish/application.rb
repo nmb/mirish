@@ -32,7 +32,7 @@ module Mirish
       set :views, "#{File.dirname(__FILE__)}/views"
       #connections = []
       #set :connections, connections
-      set connections: []
+      set connections: Hash.new {|h,k| h[k] = Array.new }
 
       SiteConfig = {
         :title => 'Mirish',
@@ -54,9 +54,9 @@ module Mirish
 
     register Sinatra::Flash
 
-    # remove expired rides every 12h
     scheduler = Rufus::Scheduler.new(:lockfile => ".rufus-scheduler.lock")
     unless scheduler.down?
+      # remove expired rides every 12h
       scheduler.every '12h' do
         Ride.all.each do |t|
           if(DateTime.now > t.date)
@@ -64,6 +64,10 @@ module Mirish
             t.destroy
           end
         end
+      end
+      # delete empty connections
+      scheduler.every '1m' do
+        settings.connections.delete_if{|k,v| v.empty?}
       end
     end
 
