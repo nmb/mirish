@@ -22,11 +22,12 @@
     <script src="/js/mirish.js"></script>
   </head>
   <body class="w3-light-gray" >
-  <div class="w3-bar w3-xlarge w3-teal">
+  <div class="w3-bar w3-xlarge w3-teal w3-display-container">
     <a class="w3-bar-item" href="/">
       <img  style="height:48px;" src="/mirish-white.svg" />
     </a>
-    <a class="w3-bar-item w3-right w3-button" href="/about" title="About">About</a>
+    <div class="w3-display-middle"><%= SiteConfig[:title] %></div>
+    <a class="w3-bar-item w3-display-right w3-button" href="/about" title="About">About</a>
     </div>
 <div class="w3-content">
         <%= yield %>
