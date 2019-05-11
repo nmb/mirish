@@ -54,7 +54,7 @@ module Mirish
 
     register Sinatra::Flash
 
-    scheduler = Rufus::Scheduler.new(:lockfile => ".rufus-scheduler.lock")
+    scheduler = Rufus::Scheduler.new(:frequency => 10)
     unless scheduler.down?
       # remove expired rides every 12h
       scheduler.every '12h' do
