@@ -28,7 +28,11 @@
   <div class="w3-card-4">
 
   <div class="w3-container w3-teal">
-    <h2><%= @ride.title %></h2>
+    <h2>
+      <%= @ride.title %>
+      <button class="w3-button w3-circle w3-xlarge w3-right" id="sharebtn" style="display:none"><img src="/share.svg" style="width:25%;height:auto"/>
+      </button> 
+    </h2>
   </div>
   <div class="w3-container">
   <h3>Date</h3>
@@ -110,3 +114,20 @@
         </div>
       </div>
 
+      <script>
+        //addShareBtn(window.location.href);
+        if(navigator.share || true){
+          var target = document.getElementById("sharebtn");
+          target.addEventListener('click', () => {
+            navigator.share({
+              title: 'Fill my car',
+              text: 'This post may or may not contain the answer to the universe',
+              url: window.location.href
+            }).catch(err => {
+              console.log("Couldn't share because of", err.message);
+            });
+          });
+
+          target.style = "";
+        }
+      </script>
