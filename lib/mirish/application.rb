@@ -21,7 +21,7 @@ module Mirish
     end
 
     set server: 'thin'
-    configure :production, :development do
+    configure  do
       set :logging, nil
       logger = Logger.new STDOUT
       logger.level = Logger::INFO
@@ -40,10 +40,17 @@ module Mirish
         :repo => 'https://github.com/nmb/mirish',
       }
 
+
+    end
+
+    configure :testing, :development do
       DataMapper.setup(:default, (ENV["DATABASE_URL"] || "sqlite3:///#{File.expand_path(File.dirname(__FILE__))}/../../tmp/#{Sinatra::Base.environment}.db"))
       DataMapper.finalize
       DataMapper.auto_upgrade!
+    end
 
+    configure :production do
+        DataMapper.setup(:default, 'postgres://user:password@hostname/database')
     end
 
     # refuse to run as root
