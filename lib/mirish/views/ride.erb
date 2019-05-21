@@ -29,7 +29,7 @@
 
   <div class="w3-container w3-teal">
     <h2>
-      <%= @ride.title %>
+      <span id="ridetitle"><%= @ride.title %></span>
       <button class="w3-button w3-circle w3-xlarge w3-right" id="sharebtn" style="display:none"><img src="/share.svg" style="width:25%;height:auto"/>
       </button> 
     </h2>
@@ -122,10 +122,10 @@
           target.addEventListener('click', () => {
             navigator.share({
               title: 'Fill my car',
-              text: 'This post may or may not contain the answer to the universe',
+              text: document.getElementById("ridetitle").innerText,
               url: window.location.href
             }).catch(err => {
-              console.log("Couldn't share because of", err.message);
+              console.log("Could not share. Error:", err.message);
             });
           });
 
