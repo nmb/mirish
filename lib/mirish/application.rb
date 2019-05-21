@@ -13,6 +13,8 @@ module Mirish
   class Application < Sinatra::Base
 
     register Sinatra::ConfigFile
+    basedir= Rack::Directory.new('').root
+    config_file(ENV["CONFIGURATION_FILE"] || "#{basedir}/config/config.yml")
 
     DataMapper::Model.raise_on_save_failure = true
     # This is to enable streaming tar:
@@ -30,8 +32,6 @@ module Mirish
       set :show_exceptions, true
       set :dump_errors, true
       set :views, "#{File.dirname(__FILE__)}/views"
-      #connections = []
-      #set :connections, connections
       set connections: Hash.new {|h,k| h[k] = Array.new }
 
       SiteConfig = {
@@ -51,6 +51,7 @@ module Mirish
 
     configure :production do
         DataMapper.setup(:default, 'postgres://user:password@hostname/database')
+        DataMapper.finalize
     end
 
     # refuse to run as root
