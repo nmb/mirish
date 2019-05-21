@@ -7,7 +7,7 @@
       updateSeat(d.id, d.name);
     }
     else if (d.hasOwnProperty('msg')) {
-      addMessage(d.created_at, d.msg);
+      addMessage(d.created_at, d.msg, true);
     }
   };
 </script>
@@ -92,7 +92,7 @@
         <div class="w3-container" id="messages">
           <% @ride.messages.each do |m| %>
     <script>
-      addMessage("<%= m.created_at %>", "<%= m.msg %>");
+      addMessage("<%= m.created_at %>", "<%= m.msg %>", false);
     </script>
           <% end %>
         </div>
