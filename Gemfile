@@ -7,7 +7,6 @@ gem 'rake'
 gem 'data_mapper'
 gem 'dm-core'
 gem 'dm-sqlite-adapter'
-gem 'dm-postgres-adapter'
 gem 'dm-timestamps'
 gem 'dm-validations'
 gem 'dm-aggregates'
@@ -29,3 +28,6 @@ group :test do
   gem 'rack-test'
 end
 
+group :production do
+  gem 'dm-postgres-adapter'
+end
