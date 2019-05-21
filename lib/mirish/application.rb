@@ -35,7 +35,7 @@ module Mirish
       set connections: Hash.new {|h,k| h[k] = Array.new }
 
       SiteConfig = {
-        :title => 'Mirish',
+        :title => settings.apptitle,
         :author => 'Mikael Borg',
         :repo => 'https://github.com/nmb/mirish',
       }
@@ -50,8 +50,13 @@ module Mirish
     end
 
     configure :production do
-        DataMapper.setup(:default, 'postgres://user:password@hostname/database')
-        DataMapper.finalize
+      if(ENV["DATABASE_URL"] )
+        dbstring = ENV["DATABASE_URL"]
+      else
+        dbstring = "postgres://#{settings.dbuser}:#{settings.dbpassword}@#{settings.dbhost}/#{settings.database}"
+      end
+      DataMapper.setup(:default, dbstring)
+      DataMapper.finalize
     end
 
     # refuse to run as root
