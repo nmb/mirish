@@ -72,6 +72,8 @@ module Mirish
 
     # ride event stream
     get "/rides/:uuid/eventstream/?", provides: 'text/event-stream' do |u|
+	response.headers['X-Accel-Buffering'] = 'no'
+	response.headers['Cache-Control'] = 'no-cache'
         stream :keep_open do |out|
           settings.connections[u] << out
           out.callback { settings.connections[u].delete(out) }
