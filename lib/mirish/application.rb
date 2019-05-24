@@ -29,7 +29,6 @@ module Mirish
       logger.level = Logger::INFO
       logger.datetime_format = '%a %d-%m-%Y %H%M '
       set :logger, logger
-      set :show_exceptions, true
       set :dump_errors, true
       set :views, "#{File.dirname(__FILE__)}/views"
       set connections: Hash.new {|h,k| h[k] = Array.new }
@@ -44,6 +43,7 @@ module Mirish
     end
 
     configure :testing, :development do
+      set :show_exceptions, true
       DataMapper.setup(:default, (ENV["DATABASE_URL"] || "sqlite3:///#{File.expand_path(File.dirname(__FILE__))}/../../tmp/#{Sinatra::Base.environment}.db"))
       DataMapper.finalize
       DataMapper.auto_upgrade!
