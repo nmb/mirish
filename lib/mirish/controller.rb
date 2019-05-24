@@ -66,8 +66,12 @@ module Mirish
     # view ride
     get "/rides/:uuid/?" do |u|
       @ride = Ride.first(:uuid => u)
-      halt 404, 'not found' unless @ride
-      erb :ride
+      if(@ride)
+        erb :ride
+      else
+        status 404
+        erb :error
+      end
     end
 
     # ride event stream
