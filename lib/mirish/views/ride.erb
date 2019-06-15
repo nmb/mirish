@@ -52,7 +52,7 @@
       <img class="w3-margin-right" style="height:32px;" src="/car-seat.svg" alt="seat" />
   <% if s.free %>
     <span id="<%= s.id %>" >
-      <button onclick="document.getElementById('<%= s.id %>:modal').style.display='block'" class="w3-button w3-round-large w3-teal w3-large">Claim</button>
+      <button onclick="document.getElementById('<%= s.id %>:modal').style.display='block'; document.getElementById('<%= s.id %>:name').select();" class="w3-button w3-round-large w3-teal w3-large">Claim</button>
     <div id="<%= s.id %>:modal" class="w3-modal">
           <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
 <div class="w3-center"><br>
