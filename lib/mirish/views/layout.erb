@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
 
 
@@ -25,7 +25,7 @@
   <body class="w3-light-gray" >
   <div class="w3-bar w3-xlarge w3-teal w3-display-container">
     <a class="w3-bar-item" href="/">
-      <img  style="height:48px;" src="/mirish-white.svg" />
+      <img  style="height:48px;" src="/mirish-white.svg" alt="logo" />
     </a>
     <a class="w3-display-middle w3-bar-item w3-button" href="/"><%= SiteConfig[:title] %></a>
     <a class="w3-bar-item w3-display-right w3-button" href="/about" title="About">About</a>
@@ -34,9 +34,8 @@
         <%= yield %>
 </div>
       <div class="w3-container w3-margin-top w3-teal w3-padding-large" style="text-align: center;">
-        <a href="<%= SiteConfig[:repo] %>"><img src="/GitHub-Mark-32px.png" style="vertical-align:middle"/> GitHub</a> &mdash;
+        <a href="<%= SiteConfig[:repo] %>"><img src="/GitHub-Mark-32px.png" style="vertical-align:middle" alt="githublogo" /> GitHub</a> &mdash;
         <a href="http://www.gnu.org/licenses/gpl.txt">GPLv3</a>
-        </p>
       </div>
   </body>
 </html>
