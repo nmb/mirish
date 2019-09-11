@@ -136,4 +136,16 @@ namespace :db do
   desc "Create the database, migrate and initialize with the seed data"
   task :setup => [:create, :migrate, :seed]
 
+  desc "Print db stats"
+  task :dbstats => :environment do |t, _|
+    puts "No of registered rides: #{Mirish::Ride.all.size}"
+  end
+
+  desc "Print ride uuid:s"
+  task :rides => :environment do |t, _|
+    Mirish::Ride.all.each do |r| 
+      puts r.uuid
+    end
+  end
+
 end
