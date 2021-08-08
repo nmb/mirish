@@ -6,7 +6,7 @@ module Mirish
     one_to_many :messages
 
     def before_create
-      self.adminuuid = SecureRandom.urlsafe_base64(n=32)
+      self.adminuuid = SecureRandom.uuid
     end
 
   end
