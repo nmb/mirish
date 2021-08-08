@@ -18,7 +18,7 @@ Sequel.migration do
     create_table(:seats) do
       uuid :id, primary_key: true
       String :name, size: 255
-      Trueclass :free, :default => true
+      TrueClass :free, :default => true
       foreign_key :ride_id, :rides, {:type => :uuid}
     end
     create_table(:messages) do
