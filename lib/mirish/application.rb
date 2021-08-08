@@ -45,13 +45,6 @@ module Mirish
       set :show_exceptions, true
     end
 
-    configure :production do
-      if(ENV["DATABASE_URL"] )
-        dbstring = ENV["DATABASE_URL"]
-      else
-        dbstring = "postgres://#{settings.dbuser}:#{settings.dbpassword}@#{settings.dbhost}/#{settings.database}"
-      end
-    end
     DB = Sequel.connect YAML.load_file(basedir + File.expand_path('/config/database.yml', __dir__))[ENV['RACK_ENV']],
                    loggers: [Logger.new($stdout)]
 
@@ -61,8 +54,6 @@ module Mirish
       STDERR.puts 'Please do not run this as root.' 
       exit 1
     end
-
-    register Sinatra::Flash
 
     scheduler = Rufus::Scheduler.new(:frequency => 10)
     unless scheduler.down?
