@@ -109,14 +109,6 @@ th {
       text-align: left;
     }
 
-.flash{
-  width: 600px;
-  padding: 5px;
-  font-weight: bold;
-  margin: auto;
-  background:#ffa270;
-  color:#666;border:1px solid #ccc;
-}
 
  /* The switch - the box around the slider */
 .switch {

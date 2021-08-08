@@ -1,4 +1,7 @@
 module Mirish
+      Ride.plugin :association_dependencies
+      Ride.add_association_dependencies seats: :destroy, messages: :destroy
+
   class ApplicationController < Application
 
     # root page
@@ -21,13 +24,13 @@ module Mirish
       r.date = params[:date]
       r.time = params[:time]
       r.save
-      params[:seats].to_i.times{ r.seats.create }
-      redirect to('/rides/' + r.uuid)
+      params[:seats].to_i.times{ r.add_seat(Seat.create) }
+      redirect to('/rides/' + r.id)
     end
 
     # delete ride
     delete "/rides/:uuid/?" do |u|
-      @ride = Mirish::Ride.first(:adminuuid => u)
+      @ride = Mirish::Ride[adminuuid: u]
       halt 404, 'not found' unless @ride
       @ride.destroy 
       halt 200
@@ -36,13 +39,15 @@ module Mirish
     # claim seat
     post "/rides/:uuid/:seatid/?" do |u,sid|
       settings.logger.info("Claiming seat #{sid}.")
-      @ride = Mirish::Ride.first(:uuid => u)
+      @ride = Mirish::Ride[id: u]
       halt 404, 'not found' unless @ride
-      s = Seat.get(sid)
+      @s = Mirish::Seat[sid]
       name = Sanitize.clean(params[:name])
-      if(s && s.ride == @ride && s.free)
-        s.update(free: false, name: name)
-        settings.connections[u].each { |out| out << "data: #{s.to_json}\n\n" }
+      if(@s && @s.ride_id == @ride.id && @s.free)
+        @s.free = false
+        @s.name = name
+        @s.save
+        settings.connections[u].each { |out| out << "data: #{@s.to_json}\n\n" }
         204
       else
         halt(404)
@@ -51,10 +56,11 @@ module Mirish
 
     # add message
     post "/rides/:uuid/?" do |u|
-      @ride = Mirish::Ride.first(:uuid => u)
+      @ride = Mirish::Ride[id: u]
       halt 404, 'not found' unless @ride
       msg = Sanitize.clean(params[:message])
-      m = @ride.messages.create(msg: msg)
+      #m = @ride.messages.create(msg: msg)
+      m = @ride.add_message(msg: msg)
       settings.connections[u].each { |out| out << "data: #{m.to_json}\n\n" }
       204
     end
@@ -65,7 +71,7 @@ module Mirish
     end
     # view ride
     get "/rides/:uuid/?" do |u|
-      @ride = Ride.first(:uuid => u)
+      @ride = Ride[id: u]
       if(@ride)
         erb :ride
       else

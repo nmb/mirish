@@ -1,20 +1,8 @@
-require 'dm-core'
-require 'dm-timestamps'
-require 'dm-validations'
-require 'dm-aggregates'
-require 'dm-migrations'
-require 'sanitize'
-
+require 'sequel'
 module Mirish
   # Rides 
-  class Seat
-    include DataMapper::Resource
-
-    property :id, Serial
-    property :name, String, :length => 255
-    property :free, Boolean, default: true
-
-    belongs_to :ride
+  class Seat < Sequel::Model
+    one_to_one :ride
 
   end
 end

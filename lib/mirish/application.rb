@@ -1,9 +1,3 @@
-require 'dm-core'
-require 'dm-timestamps'
-require 'dm-validations'
-require 'dm-aggregates'
-require 'dm-migrations'
-require 'dm-serializer'
 require "sinatra/config_file"
 require 'time'
 require 'json'
@@ -16,7 +10,6 @@ module Mirish
     basedir= Rack::Directory.new('').root
     config_file(ENV["CONFIGURATION_FILE"] || "#{basedir}/config/config.yml")
 
-    DataMapper::Model.raise_on_save_failure = true
     # This is to enable streaming tar:
     class Sinatra::Helpers::Stream
       alias_method :write, :<<
@@ -38,15 +31,18 @@ module Mirish
         :author => 'Mikael Borg',
         :repo => 'https://github.com/nmb/mirish',
       }
+      Sequel::Model.plugin :timestamps
+      Sequel::Model.plugin :json_serializer
+      Sequel::Model.plugin :uuid, { field: :id }
+      Sequel::Model.plugin :auto_validations,
+        not_null: :presence, unique_opts: { only_if_modified: true }
+
 
 
     end
 
     configure :testing, :development do
       set :show_exceptions, true
-      DataMapper.setup(:default, (ENV["DATABASE_URL"] || "sqlite3:///#{File.expand_path(File.dirname(__FILE__))}/../../tmp/#{Sinatra::Base.environment}.db"))
-      DataMapper.finalize
-      DataMapper.auto_upgrade!
     end
 
     configure :production do
@@ -55,9 +51,10 @@ module Mirish
       else
         dbstring = "postgres://#{settings.dbuser}:#{settings.dbpassword}@#{settings.dbhost}/#{settings.database}"
       end
-      DataMapper.setup(:default, dbstring)
-      DataMapper.finalize
     end
+    DB = Sequel.connect YAML.load_file(basedir + File.expand_path('/config/database.yml', __dir__))[ENV['RACK_ENV']],
+                   loggers: [Logger.new($stdout)]
+
 
     # refuse to run as root
     if Process.uid == 0
@@ -70,10 +67,10 @@ module Mirish
     scheduler = Rufus::Scheduler.new(:frequency => 10)
     unless scheduler.down?
       # remove expired rides every 12h
-      scheduler.every '12h' do
+      scheduler.every '24h' do
         Ride.all.each do |t|
-          if(DateTime.now > t.date)
-            settings.logger.info "Deleting expired ride #{t.uuid}"
+          if(DateTime.now.to_date > t.date.to_date)
+            settings.logger.info "Deleting expired ride #{t.id}"
             t.destroy
           end
         end

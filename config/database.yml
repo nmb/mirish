@@ -1,0 +1,15 @@
+# http://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html
+#
+development:
+  adapter: sqlite
+  host: localhost
+  database: mirish_development.db
+  username: mirish
+  password: mirish
+
+production:
+  adapter: postgres
+  host: localhost
+  database: mirish_prod
+  username: deploy
+  password: POSTGRESPWD

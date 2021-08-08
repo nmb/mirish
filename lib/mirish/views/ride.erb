@@ -50,7 +50,7 @@
 <% @ride.seats.each do |s| %>
     <div class="w3-padding" >
       <img class="w3-margin-right" style="height:32px;" src="/car-seat.svg" alt="seat" />
-  <% if s.free %>
+  <% if s.free == true %>
     <span id="<%= s.id %>" >
       <button onclick="document.getElementById('<%= s.id %>:modal').style.display='block'; document.getElementById('<%= s.id %>:name').select();" class="w3-button w3-round-large w3-teal w3-large">Claim</button>
     <div id="<%= s.id %>:modal" class="w3-modal">
@@ -60,7 +60,7 @@
         <img src="/car-seat.svg" alt="Seat" style="width:10%" class="w3-margin-top">
       </div>
 
-      <form class="w3-container" onSubmit="return claimSeat('<%= @ride.uuid %>', '<%= s.id %>', document.getElementById('<%= s.id %>:name').value)">
+      <form class="w3-container" onSubmit="return claimSeat('<%= @ride.id %>', '<%= s.id %>', document.getElementById('<%= s.id %>:name').value)">
         <div class="w3-section">
           <label><b>Name</b></label>
           <input class="w3-input w3-border w3-margin-bottom" id="<%= s.id %>:name" type="text" placeholder="Enter name" name="name" required pattern=".*\S+.*">

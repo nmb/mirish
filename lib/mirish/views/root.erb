@@ -92,7 +92,7 @@ No accounts, no cookies, no tracking.
   </tr>
   <% @rides.each do |t| %>
   <tr id="<%= t.adminuuid %>">
-    <td><a href="/rides/<%= t.uuid %>"><%= t.date.to_s %></a></td>
+    <td><a href="/rides/<%= t.id %>"><%= t.date.to_s %></a></td>
     <td><%= t.title.to_s %></td>
     <td><%= t.seats.count %></td>
     <td><button title="Delete" onclick="deleteRide('<%= t.adminuuid %>');" ><i class="fa fa-trash fa-2x"></i></button></td>
