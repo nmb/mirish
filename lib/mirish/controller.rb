@@ -6,6 +6,7 @@ module Mirish
 
     before do
       @title = SiteConfig[:title]
+      @baseurl = request.base_url
     end
 
     # root page
