@@ -4,6 +4,10 @@ module Mirish
 
   class ApplicationController < Application
 
+    before do
+      @title = SiteConfig[:title]
+    end
+
     # root page
     get "/" do
       @rides = Ride.all
@@ -73,6 +77,7 @@ module Mirish
     get "/rides/:uuid/?" do |u|
       @ride = Ride[id: u]
       if(@ride)
+        @title = @ride.title
         erb :ride
       else
         status 404
