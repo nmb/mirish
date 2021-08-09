@@ -2,10 +2,10 @@ require 'rake'
 require 'sequel'
 require 'yaml'
 
-#task :environment do
-#  $LOAD_PATH.push File.expand_path("../lib", __FILE__)
-#  require "mirish"
-#end
+task :environment do
+  $LOAD_PATH.push File.expand_path("../lib", __FILE__)
+  require "mirish"
+end
 
 ENV['RACK_ENV'] ||= 'development'
 
@@ -43,7 +43,7 @@ namespace :db do
   desc "Print ride uuid:s"
   task :rides => :environment do |t, _|
     Mirish::Ride.all.each do |r| 
-      puts r.uuid
+      puts r.id
     end
   end
 
