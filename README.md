@@ -13,7 +13,8 @@ Prerequisites: git, ruby.
 git clone https://github.com/nmb/mirish.git
 cd mirish
 bundle install
-rackup
+bundle exec rake db:migrate
+bundle exec rackup
 ```
 
 A local server is then accepting requests at http://localhost:9292.
