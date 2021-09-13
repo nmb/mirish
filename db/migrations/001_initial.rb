@@ -10,7 +10,6 @@ Sequel.migration do
       DateTime :created_at
       DateTime :updated_at
       Date :date, null: false
-      constraint(:date_constraint, date: Date.today .. (Date.today + 31))
       String :time, size: 255, null: false
       String :title, size: 255,  null: false
       String :description
